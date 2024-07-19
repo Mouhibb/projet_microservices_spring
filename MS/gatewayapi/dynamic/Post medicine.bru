@@ -1,0 +1,19 @@
+meta {
+  name: Post medicine
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8089/medicine-service/medicine
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Adol",
+    "price": 2,
+    "pharmacyId": "66981d900ce9c93891d1ffe7"
+  }
+}

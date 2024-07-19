@@ -1,0 +1,143 @@
+version: '3.8'
+
+services:
+  configserver:
+    container_name: configserver
+    image: config-server
+    build:
+      context: ./ConfigServer
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    networks:
+      - backend
+    restart: unless-stopped
+  discoveryservice:
+    container_name: discoveryservice
+    image: discovery-service
+    build:
+      context: ./discovery-service
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - backend
+    environment:
+      - HOSTNAME=discoveryservice
+      - PROFILE=dev
+#      - SPRING_CLOUD_CONFIG_URI=http://configserver:8888
+    restart: unless-stopped
+    depends_on:
+      - configserver
+
+  teamservice:
+    container_name: teamservice
+    image: team-service
+    build:
+      context: ./team-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    environment:
+     - SPRING_PROFILES_ACTIVE=dev
+      - MONGO_HOST=mongo
+      - EUREKA_URI=http://discoveryservice:8761/eureka/
+      - HOSTNAME=teamservice
+      - PROFILE=dev
+#      - SPRING_CLOUD_CONFIG_URI=http://configserver:8888
+    depends_on:
+      - discoveryservice
+      - mongo
+      - gatewayapiservice
+      - configserver
+
+    restart: unless-stopped
+
+  playerservice:
+    container_name: playerservice
+    image: player-service
+    build:
+      context: ./player-service
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    networks:
+      - backend
+    environment:
+    - SPRING_PROFILES_ACTIVE=dev
+      - MYSQL_URI=jdbc:mysql://mysql:3306/player?createDatabaseIfNotExist=true
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=rootpassword
+      - EUREKA_URI=http://discoveryservice:8761/eureka/
+      - TEAM_SERVICE_URI=http://teamservice:8080/team
+      - HOSTNAME=playerservice
+      - PROFILE=dev
+  #    - SPRING_CLOUD_CONFIG_URI=http://configserver:8888
+    depends_on:
+      - discoveryservice
+      - gatewayapiservice
+      - mysql
+      - teamservice
+      - configserver
+
+    restart: unless-stopped
+
+  gatewayapiservice:
+    container_name: gatewayapiservice
+    image: gateway-api-service
+    build:
+      context: ./gateway-api-service
+      dockerfile: Dockerfile
+    ports:
+      - "8089:8089"
+    networks:
+      - backend
+    environment:
+#      - SPRING_PROFILES_ACTIVE=dev
+      - EUREKA_URI=http://discoveryservice:8761/eureka/
+      - HOSTNAME=gatewayapiservice
+      - PROFILE=dev
+      - SPRING_CLOUD_CONFIG_URI=http://configserver:8888
+#      - TEAM_SERVICE_URI=http://teamservice:8080
+#      - PLAYER_SERVICE_URI=http://playerservice:9090
+    depends_on:
+      - discoveryservice
+      - configserver
+
+    restart: unless-stopped
+
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    networks:
+      - backend
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    networks:
+      - backend
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: player
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: unless-stopped
+
+networks:
+  backend:
+    external: true
+
+
+volumes:
+  mongo-data:
+  mysql-data:

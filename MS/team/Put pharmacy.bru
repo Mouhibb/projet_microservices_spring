@@ -1,0 +1,18 @@
+meta {
+  name: Put pharmacy
+  type: http
+  seq: 3
+}
+
+put {
+  url: http://localhost:8080/pharmacy/66981cf10ce9c93891d1ffe5
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id": "66981cf10ce9c93891d1ffe5",
+    "pharmacy": "Pharmacie de nuit"
+  }
+}
