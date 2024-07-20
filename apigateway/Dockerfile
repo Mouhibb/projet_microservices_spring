@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-alpine
 WORKDIR /app
 
 # Copy the application's jar file into the container at /app
-COPY target/GatewayApi*.jar /app/app.jar
+COPY target/apigateway*.jar /app/app.jar
 
 # Make port 8089 available to the world outside this container
 EXPOSE 8089

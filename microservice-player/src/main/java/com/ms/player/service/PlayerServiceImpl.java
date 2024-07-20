@@ -14,15 +14,16 @@ import java.util.Optional;
 
 @Service
 public class PlayerServiceImpl implements IPlayerService {
-
+    private final KafkaConsumerService kafkaConsumerService;
     private final PlayerRepository playerRepository;
     private final ITeamClient ITeamClient;
     private final TeamService teamService;
 
-    public PlayerServiceImpl(PlayerRepository playerRepository, ITeamClient ITeamClient, TeamService teamService) {
+    public PlayerServiceImpl(PlayerRepository playerRepository, ITeamClient ITeamClient, TeamService teamService, KafkaConsumerService kafkaConsumerService) {
         this.playerRepository = playerRepository;
         this.ITeamClient = ITeamClient;
         this.teamService = teamService;
+        this.kafkaConsumerService = kafkaConsumerService;
     }
 
     @Override
@@ -37,6 +38,8 @@ public class PlayerServiceImpl implements IPlayerService {
 
     @Override
     public Player save(Player player) {
+
+
         return playerRepository.save(player);
     }
 
