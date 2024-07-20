@@ -59,14 +59,8 @@ services:
     networks:
       - backend
     environment:
-#     - MYSQL_URI=jdbc:mysql://localhost:3306/player?createDatabaseIfNotExist=true
-      - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=
-  #   - EUREKA_URI=http://discoveryservice:8761/eureka/
-  #   - TEAM_SERVICE_URI=http://teamservice:8081/team
       - HOSTNAME=playerservice
       - PROFILE=dev
-  #   - SPRING_CLOUD_CONFIG_URI=http://configserver:8888
     depends_on:
       - discoveryservice
       - gatewayapiservice
