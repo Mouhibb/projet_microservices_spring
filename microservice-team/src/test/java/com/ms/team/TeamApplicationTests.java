@@ -1,10 +1,10 @@
-package com.ms.medicine;
+package com.ms.team;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PlayerApplicationTests {
+class TeamApplicationTests {
 
     @Test
     void contextLoads() {
